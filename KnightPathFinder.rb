@@ -1,3 +1,5 @@
+require_relative '00_tree_node'
+require 'byebug'
 
 class KnightPathFinder
 
@@ -39,8 +41,9 @@ class KnightPathFinder
     [ 2,  1]
   ]
 
-  def self.valid_moves(pos)
+  def self.valid_moves(el)
     valids = []
+    pos = el.value
     MOVES.each do |r, c|
       row, col = pos
       row += r
@@ -54,18 +57,30 @@ class KnightPathFinder
 
   def build_move_tree
     # q = [@start_pos]
+
     root_node = PolyTreeNode.new(start_pos)
-
     # build tree with queue structure
-    queue = [root_node]
+    tree = [root_node] # root_node has no children
+
+    queue = [root_node] # root node
     until queue.empty?
-      el = queue.shift
-      el.new_move_positions.each do |new_moves|
-
-      queue << new_moves
-    #
+      # debugger
+      el = queue.shift # Node. A polytree Node <value, parent, children>
+      # p new_move_positions(el.value)
+      # debugger
+      new_move_positions(el).each do |new_moves|
+       #[1,2]
+        # leaf = PolyTreeNode.new(new_moves)
+        el.add_child(leaf)
+        queue << leaf
+        tree << leaf
+      end
     end
+    tree
+  end
 
+  def find_path(end_pos)
+    built_tree
   end
 
 end
@@ -74,10 +89,10 @@ end
 
 
 
-
-
-kpf = KnightPathFinder.new([0,0]) #position I'm starting at
-kpf.find_path([2,1]) #returns [][0,0], [2,1]]
+#
+p kpf = KnightPathFinder.new([0,0]) #position I'm starting at
+p kpf.build_move_tree
+# kpf.find_path([2,1]) #returns [][0,0], [2,1]]
 
 def bfs(target_value)
   queue = [self] # this is initial queue with your root value
